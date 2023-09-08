@@ -4,38 +4,42 @@ pipeline {
     }
     stages {
         stage('checkout the presence of source code') {
-            steps{
-                bash '[ /home/ubuntu/food1 ] || cd /home/ubuntu && git clone https://github.com/sharma04500/food1.git || exit 1'
+            steps {
+        script {
+            if (!fileExists('/home/ubuntu/food1')) {
+                sh "cd /home/ubuntu && git clone https://github.com/sharma04500/food1.git"
             }
+        }
+    }
         }
         stage('pull the latest version of code') {
             steps {
-                bash 'cd /home/ubuntu/food1 && git pull https://github.com/sharma04500/food1.git || exit 1'
+                sh 'cd /home/ubuntu/food1 && git pull origin main || exit 1'
             }
         }
         stage('check for the running containers') {
             steps {
-                bash 'docker container ps'
+                sh 'docker container ps'
             }
         }
         stage('Stop & Delete the existing containers') {
             steps {
-                bash 'for i in `docker container ps -aq`;do docker container stop $i && docker container rm -f $i;done'
+                sh 'for i in `docker container ps -aq`;do docker container stop $i && docker container rm -f $i;done'
             }
         }
         stage('Delete the existing images') {
             steps {
-                bash 'for i in `docker image ls -aq`;do docker image rm -f $i;done'
+                sh 'for i in `docker image ls -aq`;do docker image rm -f $i;done'
             }
         }
         stage('Build new image from the latest code') {
             steps {
-                bash 'cd /home/ubuntu && docker image build . -t myimage:latest'
+                sh 'cd /home/ubuntu && docker image build . -t myimage:latest'
             }
         }
         stage('Launch a new container') {
             steps {
-                bash 'docker container run -d --name food -p9999:80 myimage:latest'
+                sh 'docker container run -d --name food -p9999:80 myimage:latest'
             }
         }
     }
