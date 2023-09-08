@@ -1,0 +1,37 @@
+---
+- name: to deploy a docker container on remote host
+  hosts: docker
+  tasks:
+  - name: "Clone the latest code from the git repo."
+    git:
+        repo: https://github.com/sharma04500/food1.git
+        clone: true
+        update: true
+        dest: /home/ubuntu/project/food1
+
+  - name: "To remove any existing containers"
+    shell: for i in `docker container ps -aq`; do docker container stop $i && docker container rm $i; done
+
+  - name: " To remove the old image, in order to clean up the unwanted memory"
+  #      Use head and tail combinations to specify a particular image, depending upon the required logic, corresponding
+  # to the position of the image, below is an example to remove the second image as well as an image with tag "myimage".
+  # shell: sleep 10 && for i in `docker image ls -aq | head -2 | tail -1` ; do docker image rm $i;done && docker image rm -f myimage || exit 0
+    shell: for i in `docker image ls -aq`; do docker image rm -f $i;done
+    
+  - name: "Build a new image using the latest code"
+    shell: docker image build /home/ubuntu/project --no-cache -t myimage:latest
+    #docker_image:
+        #name: myimage
+        #state: present
+        #source: build
+        #build:
+          #nocache: true
+          #path: /home/ubuntu/project
+        #tag: latest
+        #force_tag: true
+
+  - name: "To launch a new container from the latest image"
+    docker_container:
+        name: site
+        image: myimage:latest
+        published_ports: 8000:80
