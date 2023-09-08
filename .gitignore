@@ -1,2 +1,3 @@
-method-1/.$reference image.png.bkp
-method-2/.$reference image.png.bkp
+*.bkp
+.*.bkp
+.*.*.bkp
