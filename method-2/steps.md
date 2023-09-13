@@ -5,12 +5,12 @@
 # ON SLAVE (DOCKER NODE)
 1. SSH and install docker by executing the file{script} downloaded by `wget https://get.docker.com` 
    on the agent node.
-2. Also install openjdk-17-jre through `apt install -y openjdk`
+2. Also install openjdk-17-jre through `apt install -y openjdk-17-jre`
 3. Make sure that ubuntu user in the slave is able to perform the docker actions.
 4. To permit ubuntu user to execute docker commands, add ubuntu to docker group 
    `sudo usermod -aG docker ubuntu`
 5. To make sure that ubuntu user assumed the docker group permissions, restart the instance or
-   execute `newgrp docker` and test with `docker container ps`
+   simply execute `newgrp docker` and test with `docker container ps`
 6. Now, Generate a key pair in the worker node for ubuntu user using `ssh-keygen` and cat the 
    public and private keys through `cat ~/.ssh/id_rsa.pub` and `cat ~/.ssh/id_rsa` respectively.
 7. Append the public key in .ssh/authorized_keys file of the docker node.
